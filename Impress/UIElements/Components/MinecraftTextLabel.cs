@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Impress
+namespace Impress.UIElements.Components
 {
     class MinecraftTextLabel : Label
     {

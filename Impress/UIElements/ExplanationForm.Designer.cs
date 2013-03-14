@@ -1,4 +1,4 @@
-﻿namespace Impress
+﻿namespace Impress.UIElements
 {
     partial class ExplanationForm
     {

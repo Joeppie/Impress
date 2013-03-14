@@ -52,30 +52,51 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExplanationForm.cs">
+    <Compile Include="UIElements\AutoFormatForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ExplanationForm.Designer.cs">
+    <Compile Include="UIElements\AutoFormatForm.Designer.cs">
+      <DependentUpon>AutoFormatForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIElements\Components\ColorPicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UIElements\Components\ColorPicker.Designer.cs">
+      <DependentUpon>ColorPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIElements\Components\SelectableLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UIElements\ExplanationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIElements\ExplanationForm.Designer.cs">
       <DependentUpon>ExplanationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtensionMethods\StringExtensions.cs" />
-    <Compile Include="MinecraftTextLabel.cs">
+    <Compile Include="UIElements\Components\MinecraftTextLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MainForm.cs">
+    <Compile Include="UIElements\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="UIElements\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MinecraftTextRenderHelper.cs" />
+    <Compile Include="MinecraftText\MinecraftTextRenderHelper.cs" />
     <Compile Include="MinecraftText\MineraftCharacter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ExplanationForm.resx">
+    <EmbeddedResource Include="UIElements\AutoFormatForm.resx">
+      <DependentUpon>AutoFormatForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIElements\Components\ColorPicker.resx">
+      <DependentUpon>ColorPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIElements\ExplanationForm.resx">
       <DependentUpon>ExplanationForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="UIElements\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -14,22 +14,25 @@ using Impress.ExtensionMethods;
 using System.Text.RegularExpressions;
 using System.IO;
 
-namespace Impress
+namespace Impress.UIElements
 {
     public partial class MainForm : Form
     {
 
         volatile bool control = false;
         volatile bool printRequested = false;
-        int keysdown = 0;
+        private int keysdown = 0;
 
+        private KeyboardHookListener _listener;
+
+        private BackgroundWorker worker = new BackgroundWorker();
+
+        
 
         public delegate void FileChangedHandler(object sender, EventArgs e);
 
         public event FileChangedHandler FileChanged;
 
-
-        private KeyboardHookListener _listener;
 
         private bool _changed;
         public bool Changed
@@ -49,12 +52,7 @@ namespace Impress
                 }
                 _changed = value;
             }
-
         }
-
-
-
-        BackgroundWorker worker = new BackgroundWorker();
 
 
         private void SetFormTitle()
@@ -70,7 +68,6 @@ namespace Impress
             SetFormTitle();
             SetPageXofYText();
 
-
             this.FileChanged += (s, e) => { SetFormTitle(); };
             this.FileChanged += (s, e) => { SetPageXofYText(); };
 
@@ -79,19 +76,11 @@ namespace Impress
             //Make user save if needed, or allow them to cancel the operation.
             this.FormClosing += (s, e) => { e.Cancel = !AskToSaveChangesIfNeeded(); };
 
-
             _listener = new KeyboardHookListener(new GlobalHooker());
-
-
-
             _listener.KeyDown += listener_KeyDown;
             _listener.KeyUp += listener_KeyUp;
 
             richTextBox1.Focus();
-
-
-            //SendKeys.SendWait("{(}");
-
 
             _listener.Enabled = true;
 
@@ -141,7 +130,6 @@ namespace Impress
             }
             catch (Exception)
             {
-
                 throw;
             }
 
@@ -151,17 +139,10 @@ namespace Impress
         /// Prints the specified text using sendkeys in relatively small increments
         /// </summary>
         /// <param name="text">the textpage to print.</param>
-        public void PrintPageInSteps(String text)
+        public void PrintPage(String text)
         {
             try
             {
-                var blobs = text.SplitByLength(40)
-                    //Replace enters by their sendkeys 'code'
-                    //.Select(s => EscapeCharactersForSendkey(s))
-                    .ToList();
-
-                //  foreach (var blob in blobs)
-                {
                     if (text.Last() == '\n')
                     {
                         text = new String(text.Take(text.Length - 1).ToArray());
@@ -170,8 +151,6 @@ namespace Impress
                     Clipboard.SetText(text, TextDataFormat.Text);
                     //Thread.Sleep(400);
                     SendKeys.SendWait("^V");
-                    //Thread.Sleep(200);
-                }
             }
             catch
             {
@@ -186,10 +165,12 @@ namespace Impress
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
 
+            //Invoke on the UI thread, modifying UI components is only valid there,
+            //Also this frees up the current thread which is blocking the keypress to all applications.
             this.Invoke((MethodInvoker)delegate
             {
 
-                PrintPageInSteps(label1.CurrentPageText);
+                PrintPage(label1.CurrentPageText);
                 //SendKeys.Send(label1.CurrentPageText);
                 Console.Beep(500, 20);
                 if (label1.Page < label1.MaxPageNumber)
@@ -295,7 +276,6 @@ namespace Impress
                     this.Changed = false;
                 }
             }
-
         }
 
         /// <summary>
@@ -397,10 +377,9 @@ Joeppie@gmail.com";
 
         private void button3_Click(object sender, EventArgs e)
         {
+
             string capitalizationColor = "&4";
             string restorationColor = "&0";
-
-
 
             string replace =
                 "${start}"
@@ -412,6 +391,7 @@ Joeppie@gmail.com";
 
             richTextBox1.Text = Regex.Replace(richTextBox1.Text, regex, replace);
         }
+
 
     }
 }

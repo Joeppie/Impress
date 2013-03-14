@@ -6,9 +6,9 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 
-namespace Impress
+namespace Impress.MinecraftText
 {
-    class MinecraftTextRenderHelper
+    class MinecraftTextRenderHelper : IDisposable
     {
         volatile Font _minecraftFont;
         volatile PrivateFontCollection privateFontCollection = new PrivateFontCollection();
@@ -26,21 +26,38 @@ namespace Impress
         }
 
 
-        private Dictionary<char, Brush> ColorDictionary = new Dictionary<char, Brush>(16);
-        private Dictionary<char, Font> FontDictionary = new Dictionary<char, Font>();
-
+        public Dictionary<char, Color> ColorDictionary
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
-        /// Stores at what character index (in raw string counting formatting codes) new pages begin.
+        /// For reverse lookup purposes of the color.
         /// </summary>
-        Dictionary<int, int> PageDictionary = new Dictionary<int, int>();
+        public Dictionary<Color, char> CharDictionary
+        {
+            get;
+            private set;
+        }
 
+        public Dictionary<char, Brush> BrushDictionary
+        {
+            get;
+            private set;
+        }
+
+        public Dictionary<char, Font> FontDictionary
+        {
+            get;
+            private set;
+        }     
 
         private Brush GetBrush(char c)
         {
             Brush value;
 
-            ColorDictionary.TryGetValue(c, out value);
+            BrushDictionary.TryGetValue(c, out value);
 
             return value;
         }
@@ -56,24 +73,41 @@ namespace Impress
 
         public MinecraftTextRenderHelper()
         {
+            ColorDictionary = new Dictionary<char, Color>(16);
+            CharDictionary = new Dictionary<Color, char>(16);
+            BrushDictionary = new Dictionary<char, Brush>(16);
+            FontDictionary = new Dictionary<char, Font>();
+
             //Populate Colors.
-            ColorDictionary.Add('0', new SolidBrush(Color.Black));
-            ColorDictionary.Add('1', new SolidBrush(Color.FromArgb(0, 0, 170)));
-            ColorDictionary.Add('2', new SolidBrush(Color.FromArgb(0, 170, 0)));
-            ColorDictionary.Add('3', new SolidBrush(Color.FromArgb(0, 170, 170)));
-            ColorDictionary.Add('4', new SolidBrush(Color.FromArgb(170, 0, 0)));
-            ColorDictionary.Add('5', new SolidBrush(Color.FromArgb(170, 0, 170)));
-            ColorDictionary.Add('6', new SolidBrush(Color.FromArgb(255, 170, 0)));
-            ColorDictionary.Add('7', new SolidBrush(Color.FromArgb(170, 170, 170)));
-            ColorDictionary.Add('8', new SolidBrush(Color.FromArgb(85, 85, 85)));
-            ColorDictionary.Add('9', new SolidBrush(Color.FromArgb(85, 85, 255)));
-            ColorDictionary.Add('a', new SolidBrush(Color.FromArgb(85, 255, 85)));
-            ColorDictionary.Add('b', new SolidBrush(Color.FromArgb(85, 255, 255)));
-            ColorDictionary.Add('c', new SolidBrush(Color.FromArgb(255, 85, 85)));
-            ColorDictionary.Add('d', new SolidBrush(Color.FromArgb(255, 85, 255)));
-            ColorDictionary.Add('e', new SolidBrush(Color.FromArgb(255, 255, 85)));
-            ColorDictionary.Add('f', new SolidBrush(Color.FromArgb(255, 255, 255)));
-            
+            ColorDictionary.Add('0',  (Color.Black));
+            ColorDictionary.Add('1',  (Color.FromArgb(0, 0, 170)));
+            ColorDictionary.Add('2',  (Color.FromArgb(0, 170, 0)));
+            ColorDictionary.Add('3',  (Color.FromArgb(0, 170, 170)));
+            ColorDictionary.Add('4',  (Color.FromArgb(170, 0, 0)));
+            ColorDictionary.Add('5',  (Color.FromArgb(170, 0, 170)));
+            ColorDictionary.Add('6',  (Color.FromArgb(170, 170, 170)));
+            ColorDictionary.Add('8',  (Color.FromArgb(85, 85, 85)));
+            ColorDictionary.Add('9',  (Color.FromArgb(85, 85, 255)));
+            ColorDictionary.Add('a',  (Color.FromArgb(85, 255, 85)));
+            ColorDictionary.Add('b',  (Color.FromArgb(85, 255, 255)));
+            ColorDictionary.Add('c',  (Color.FromArgb(255, 85, 85)));
+            ColorDictionary.Add('d',  (Color.FromArgb(255, 85, 255)));
+            ColorDictionary.Add('e',  (Color.FromArgb(255, 255, 85)));
+            ColorDictionary.Add('f',  (Color.FromArgb(255, 255, 255)));
+
+            foreach (var item in ColorDictionary)
+            {
+                CharDictionary.Add(item.Value, item.Key);
+            }
+
+
+            //Populate Brushes based on colors.
+            foreach (KeyValuePair<char,Color> item in ColorDictionary)
+            {
+                BrushDictionary.Add(item.Key, new SolidBrush(item.Value));
+            }
+       
+
             try //This will fail in the form designer, since the font won't be found.
             {
                 FontFamily[] fontFamilies;
@@ -84,8 +118,6 @@ namespace Impress
                 fontFamilies = privateFontCollection.Families;
 
                 _minecraftFont = new Font(fontFamilies.First(), 16);
-                
-
 
                 FontDictionary.Add('l', new Font(fontFamilies.First(), 16, FontStyle.Bold));
                 FontDictionary.Add('m', new Font(fontFamilies.First(), 16, FontStyle.Strikeout));
@@ -99,7 +131,6 @@ namespace Impress
             }
 
         }
-
 
         /// <summary>
         /// Renders the given page using the existing generated MinecraftCharacters
@@ -130,13 +161,13 @@ namespace Impress
         /// <param name="graphics"></param>
         /// <param name="page">zero based page index.</param>
         /// <returns></returns>
-        public List<MinecraftCharacter> RenderCharactersUsingText(String text,Graphics graphics,int? page)
+        public List<MinecraftCharacter> RenderCharactersUsingText(String text, Graphics graphics, int? page)
         {
             List<MinecraftCharacter> chars = new List<MinecraftCharacter>(text.Length);
 
             //not an exact measure. probably too wide, but the character width unfortunately
             //varies due to rendering/font differences.
-            const int width = 318; 
+            const int width = 318;
 
             const string CodeChars = "0123456789abcdefklmnor";
             const string CodeStarters = "&§";
@@ -152,8 +183,8 @@ namespace Impress
             //Used to pretend the font was not reset, because of a bug in minecraft:
             //It will only actually reset with the reset-char even across lines. but probably not across pages. (I hope!)
             Font pretendFont;
-            
-            
+
+
             SolidBrush eraserBrush = new SolidBrush(Color.Orange);
 
             float maxWidth = width;
@@ -320,7 +351,7 @@ namespace Impress
                                 Coordinate = chars.Last().Coordinate //whitespace anyhow.
                             });
 
-                            indexInPage -= (i - whitespaceIndex)-1; //one less, register that enter sir!
+                            indexInPage -= (i - whitespaceIndex) - 1; //one less, register that enter sir!
                             i -= i - whitespaceIndex;
 
                             currentLine++;
@@ -340,10 +371,10 @@ namespace Impress
 
 
 
-                    PointF coordinate = new PointF(currentWidth, (currentLine%linesPerPage) * size.Height);
+                    PointF coordinate = new PointF(currentWidth, (currentLine % linesPerPage) * size.Height);
 
                     //Either first page when rendering first thing, or specified page if different.
-                    if (page == null  && currentLine/linesPerPage == 0 || page == currentLine / linesPerPage)
+                    if (page == null && currentLine / linesPerPage == 0 || page == currentLine / linesPerPage)
                     {
                         graphics.DrawString(c.ToString(), font, brush, coordinate);
                     }
@@ -351,14 +382,15 @@ namespace Impress
                     currentWidth += size.Width;
 
 
-                    chars.Add(new MinecraftCharacter{
-                            Char = c,
-                            Brush =  brush,
-                            Font = font,
-                            Line = currentLine,
-                            Page = currentLine / linesPerPage,
-                            Coordinate = coordinate
-                        });
+                    chars.Add(new MinecraftCharacter
+                    {
+                        Char = c,
+                        Brush = brush,
+                        Font = font,
+                        Line = currentLine,
+                        Page = currentLine / linesPerPage,
+                        Coordinate = coordinate
+                    });
                     indexInPage++;
 
                     if (whitespaceIndex == i)
@@ -374,5 +406,20 @@ namespace Impress
             return chars;
         }
 
+
+        public void Dispose()
+        {
+            foreach (Font font in FontDictionary.Values)
+            {
+                font.Dispose();
+            }
+
+            foreach (Brush brush in BrushDictionary.Values)
+            {
+                brush.Dispose();
+            }
+
+            privateFontCollection.Dispose();
+        }
     }
 }
