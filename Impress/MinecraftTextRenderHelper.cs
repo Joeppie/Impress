@@ -74,10 +74,8 @@ namespace Impress
             ColorDictionary.Add('e', new SolidBrush(Color.FromArgb(255, 255, 85)));
             ColorDictionary.Add('f', new SolidBrush(Color.FromArgb(255, 255, 255)));
             
-            try //This will fail in the designed, since the font won't be found.
+            try //This will fail in the form designer, since the font won't be found.
             {
-
-                // throw new Exception();
                 FontFamily[] fontFamilies;
 
                 privateFontCollection.AddFontFile("font/minecraft_font_by_pwnage_block-d37t6nb.ttf");
@@ -135,7 +133,6 @@ namespace Impress
         public List<MinecraftCharacter> RenderCharactersUsingText(String text,Graphics graphics,int? page)
         {
             List<MinecraftCharacter> chars = new List<MinecraftCharacter>(text.Length);
-            //base.OnPaint(e);
 
             //not an exact measure. probably too wide, but the character width unfortunately
             //varies due to rendering/font differences.
@@ -174,13 +171,7 @@ namespace Impress
             if (graphics.TextRenderingHint != System.Drawing.Text.TextRenderingHint.SingleBitPerPixel)
             {
                 graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixel;
-                // Thread.Sleep(100); 
             }
-
-
-            //List<MinecraftCharacter> charsOnPage = new List<MinecraftCharacter>(254);
-
-
 
             for (int i = 0; i < text.Length; i++)
             {
@@ -218,12 +209,6 @@ namespace Impress
                     indexInPage++;
 
                     currentLine++;
-
-                    if (currentLine == linesPerPage) //Max number of lines on a single minecraft book is 13. zero based
-                    {
-                     //   PageDictionary[this.Page] = i;
-                        //break;
-                    }
 
                     currentWidth = 0;
                     continue;
@@ -346,12 +331,6 @@ namespace Impress
 
 
                         currentLine++;
-                        //Uncapped: find out everything  :D
-                        if (currentLine == linesPerPage) //Max number of lines on a single minecraft book is 13. zero based
-                        {
-                           // PageDictionary.Add(this.Page + 1, i);
-                           // break;
-                        }
 
                         currentWidth = 0;
                         indexInPage++;
@@ -362,16 +341,6 @@ namespace Impress
 
 
                     PointF coordinate = new PointF(currentWidth, (currentLine%linesPerPage) * size.Height);
-
-
-
-                    //Draw.
-                    //Graphics.DrawRectangle(new Pen(GetBrush('f')),
-                    //    new Rectangle(
-                    //        (int)Math.Round(coordinate.X),
-                    //        (int)Math.Round(coordinate.Y),
-                    //        (int)Math.Round(size.Width),
-                    //        (int)Math.Round(size.Height)));
 
                     //Either first page when rendering first thing, or specified page if different.
                     if (page == null  && currentLine/linesPerPage == 0 || page == currentLine / linesPerPage)

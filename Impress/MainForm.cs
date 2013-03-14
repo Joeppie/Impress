@@ -24,7 +24,7 @@ namespace Impress
         int keysdown = 0;
 
 
-        public delegate void FileChangedHandler(object sender,EventArgs e);
+        public delegate void FileChangedHandler(object sender, EventArgs e);
 
         public event FileChangedHandler FileChanged;
 
@@ -39,7 +39,7 @@ namespace Impress
                 return _changed;
             }
 
-          private set
+            private set
             {
                 if (FileChanged != null && _changed != value)
                 {
@@ -51,7 +51,7 @@ namespace Impress
             }
 
         }
-  
+
 
 
         BackgroundWorker worker = new BackgroundWorker();
@@ -59,7 +59,7 @@ namespace Impress
 
         private void SetFormTitle()
         {
-            this.Text = String.Format("Joeppie's Book printer [{0}] {1}", OpenFileName ?? "new file", Changed ? "*" : "");
+            this.Text = String.Format("Impress Book printer [{0}] {1}", OpenFileName ?? "new file", Changed ? "*" : "");
         }
 
 
@@ -82,7 +82,7 @@ namespace Impress
 
             _listener = new KeyboardHookListener(new GlobalHooker());
 
-            
+
 
             _listener.KeyDown += listener_KeyDown;
             _listener.KeyUp += listener_KeyUp;
@@ -108,16 +108,14 @@ namespace Impress
             SetPageXofYText();
         }
 
+
+        //Todo: rewrite to detect ctrl-v and auto-populate first page, remove sendkeys dependency.
         void listener_KeyUp(object sender, KeyEventArgs e)
         {
             try
             {
                 keysdown--;
-                control = false; //WARNING THIS MAY BE WRONG THIS MAY BE WRONG THIS MAY BE WRONG
-                //WARNING THIS MAY BE WRONG THIS MAY BE WRONG THIS MAY BE WRONG
-                //WARNING THIS MAY BE WRONG THIS MAY BE WRONG THIS MAY BE WRONG
-                //WARNING THIS MAY BE WRONG THIS MAY BE WRONG THIS MAY BE WRONG
-                //WARNING THIS MAY BE WRONG THIS MAY BE WRONG THIS MAY BE WRONG
+                control = false; //Not sure if this is the best way to detect.
 
                 if (e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey)
                 {
@@ -125,7 +123,7 @@ namespace Impress
                     if (printRequested)
                     {
 
-                       // Console.Beep();
+                        // Console.Beep();
                         if (!worker.IsBusy)
                         {
                             _listener.Enabled = false;
@@ -143,49 +141,11 @@ namespace Impress
             }
             catch (Exception)
             {
-                
+
                 throw;
             }
 
         }
-
-
-                String EscapeCharactersForSendkey(string chars)
-        {
-            StringBuilder builder = new StringBuilder();
-
-
-            return chars; // workaround may not need escaping anymore at all when pasting.
-            foreach (char c in chars)
-            {
-                if ("+^%~".Contains(c.ToString()))
-                {
-                    builder.Append('(');
-                    builder.Append(c);
-                    builder.Append(')');
-                }
-                else if ("{}()".Contains(c.ToString()))
-                {
-                    builder.Append('{');
-                    builder.Append(c);
-                    builder.Append('}');
-                }
-                else
-                {
-                    if (c == '\n')
-                    {
-                        builder.Append('~');
-                    }
-                    else
-                    {
-                        builder.Append(c);
-                    }
-                }
-            }
-
-                return builder.ToString();
-        }
-
 
         /// <summary>
         /// Prints the specified text using sendkeys in relatively small increments
@@ -200,20 +160,20 @@ namespace Impress
                     //.Select(s => EscapeCharactersForSendkey(s))
                     .ToList();
 
-             //  foreach (var blob in blobs)
+                //  foreach (var blob in blobs)
                 {
                     if (text.Last() == '\n')
                     {
-                      text =  new String(text.Take(text.Length - 1).ToArray());
+                        text = new String(text.Take(text.Length - 1).ToArray());
                     }
 
-                    Clipboard.SetText(text,TextDataFormat.Text);
+                    Clipboard.SetText(text, TextDataFormat.Text);
                     //Thread.Sleep(400);
                     SendKeys.SendWait("^V");
                     //Thread.Sleep(200);
                 }
             }
-            catch(Exception ex)
+            catch
             {
                 throw;
             }
@@ -247,7 +207,7 @@ namespace Impress
             });
 
 
-            
+
         }
 
         void listener_KeyDown(object sender, KeyEventArgs e)
@@ -265,16 +225,12 @@ namespace Impress
                 if ((e.KeyData == Keys.U) && control)
                 {
                     e.Handled = true;
-                 //   currentText = "karel is a strange man";
-                    // richTextBox1.Text += e.KeyData.ToString() + "\r\n";
-                    // SendKeys.Send(richTextBox1.Text);
                     printRequested = true;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 throw;
-                //richTextBox1.Text += ex.Message;
             }
         }
 
@@ -304,8 +260,6 @@ namespace Impress
             {
                 label1.Page++;
             }
-
-           // MessageBox.Show(label1.CurrentPageText);
             SetEnabledForPagesButtons();
 
         }
@@ -379,7 +333,7 @@ namespace Impress
 
 
             }
-           return true; //No problems encountered.
+            return true; //No problems encountered.
         }
 
         private void SaveFileAs()
@@ -424,14 +378,15 @@ namespace Impress
             SaveFileAs();
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string title = "About Impress bookprinter";
+            string text =
+@"Impress was written by Joeppie (also my ingame MineCraft name) 
 
+Joeppie@gmail.com";
+
+            MessageBox.Show(text,title);
         }
 
         private void howToUseToolStripMenuItem_Click(object sender, EventArgs e)
@@ -445,10 +400,17 @@ namespace Impress
             string capitalizationColor = "&4";
             string restorationColor = "&0";
 
-            string replace = string.Format(@"$1{0}$2{1}",capitalizationColor,restorationColor);
-            
 
-            richTextBox1.Text = Regex.Replace(richTextBox1.Text,@"(^\s*|\.\s*)([A-Z])",replace);
+
+            string replace =
+                "${start}"
+                + capitalizationColor
+                + "${capital}"
+                + restorationColor;
+
+            string regex = @"(?<start>^\s*|(\.|\?|\!)\s*)(?<capital>[A-Z])";
+
+            richTextBox1.Text = Regex.Replace(richTextBox1.Text, regex, replace);
         }
 
     }
