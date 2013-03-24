@@ -38,10 +38,10 @@
             this.howToUseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.navigableMinecraftTextLabel1 = new Impress.UIElements.Components.NavigableMinecraftTextLabel();
             this.PrintButton = new System.Windows.Forms.Button();
             this.AutoFormatWizardButton = new System.Windows.Forms.Button();
             this.SourceTextBox = new System.Windows.Forms.RichTextBox();
+            this.navigableMinecraftTextLabel1 = new Impress.UIElements.Components.NavigableMinecraftTextLabel();
             this.MenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -127,13 +127,6 @@
             this.panel1.Size = new System.Drawing.Size(626, 528);
             this.panel1.TabIndex = 3;
             // 
-            // navigableMinecraftTextLabel1
-            // 
-            this.navigableMinecraftTextLabel1.Location = new System.Drawing.Point(12, 13);
-            this.navigableMinecraftTextLabel1.Name = "navigableMinecraftTextLabel1";
-            this.navigableMinecraftTextLabel1.Size = new System.Drawing.Size(338, 434);
-            this.navigableMinecraftTextLabel1.TabIndex = 13;
-            // 
             // PrintButton
             // 
             this.PrintButton.Location = new System.Drawing.Point(9, 490);
@@ -166,6 +159,13 @@
             this.SourceTextBox.Text = "";
             this.SourceTextBox.TextChanged += new System.EventHandler(this.SourceTextBoxTextChanged);
             // 
+            // navigableMinecraftTextLabel1
+            // 
+            this.navigableMinecraftTextLabel1.Location = new System.Drawing.Point(12, 13);
+            this.navigableMinecraftTextLabel1.Name = "navigableMinecraftTextLabel1";
+            this.navigableMinecraftTextLabel1.Size = new System.Drawing.Size(338, 434);
+            this.navigableMinecraftTextLabel1.TabIndex = 13;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -173,6 +173,7 @@
             this.ClientSize = new System.Drawing.Size(626, 552);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.MenuStrip);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.MenuStrip;
             this.MaximizeBox = false;
