@@ -36,12 +36,11 @@
     <StartupObject>Impress.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MouseKeyboardActivityMonitor">
-      <HintPath>extref\MouseKeyboardActivityMonitor.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -52,11 +51,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UIElements\AutoFormatForm.cs">
+    <Compile Include="ExtensionMethods\ColorExtensions.cs" />
+    <Compile Include="UIElements\Components\FormatPicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UIElements\Components\FormatPicker.Designer.cs">
+      <DependentUpon>FormatPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIElements\Components\NavigableMinecraftTextLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UIElements\Components\NavigableMinecraftTextLabel.Designer.cs">
+      <DependentUpon>NavigableMinecraftTextLabel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIElements\EventArguments\ColorPickedEventArgs.cs" />
+    <Compile Include="UIElements\EventArguments\FormatPickedEventArgs.cs" />
+    <Compile Include="UIElements\Forms\FormattingWizard\AutoFormatWizard.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UIElements\AutoFormatForm.Designer.cs">
-      <DependentUpon>AutoFormatForm.cs</DependentUpon>
+    <Compile Include="UIElements\Forms\FormattingWizard\AutoFormatWizard.Designer.cs">
+      <DependentUpon>AutoFormatWizard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIElements\Components\FormattingControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UIElements\Components\FormattingControl.Designer.cs">
+      <DependentUpon>FormattingControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UIElements\Components\ColorPicker.cs">
       <SubType>Component</SubType>
@@ -64,39 +84,60 @@
     <Compile Include="UIElements\Components\ColorPicker.Designer.cs">
       <DependentUpon>ColorPicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="UIElements\Components\SelectableLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UIElements\ExplanationForm.cs">
+    <Compile Include="UIElements\Forms\ExplanationForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UIElements\ExplanationForm.Designer.cs">
+    <Compile Include="UIElements\Forms\ExplanationForm.Designer.cs">
       <DependentUpon>ExplanationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtensionMethods\StringExtensions.cs" />
     <Compile Include="UIElements\Components\MinecraftTextLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UIElements\MainForm.cs">
+    <Compile Include="UIElements\Forms\FormattingWizard\FormattingForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UIElements\MainForm.Designer.cs">
+    <Compile Include="UIElements\Forms\FormattingWizard\FormattingForm.Designer.cs">
+      <DependentUpon>FormattingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIElements\Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIElements\Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MinecraftText\MinecraftTextRenderHelper.cs" />
     <Compile Include="MinecraftText\MineraftCharacter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="UIElements\AutoFormatForm.resx">
-      <DependentUpon>AutoFormatForm.cs</DependentUpon>
+    <Compile Include="UIElements\Forms\PrintForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIElements\Forms\PrintForm.Designer.cs">
+      <DependentUpon>PrintForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="UIElements\Components\FormatPicker.resx">
+      <DependentUpon>FormatPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIElements\Components\NavigableMinecraftTextLabel.resx">
+      <DependentUpon>NavigableMinecraftTextLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIElements\Forms\FormattingWizard\AutoFormatWizard.resx">
+      <DependentUpon>AutoFormatWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIElements\Components\FormattingControl.resx">
+      <DependentUpon>FormattingControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UIElements\Components\ColorPicker.resx">
       <DependentUpon>ColorPicker.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UIElements\ExplanationForm.resx">
+    <EmbeddedResource Include="UIElements\Forms\ExplanationForm.resx">
       <DependentUpon>ExplanationForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UIElements\MainForm.resx">
+    <EmbeddedResource Include="UIElements\Forms\FormattingWizard\FormattingForm.resx">
+      <DependentUpon>FormattingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIElements\Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -109,6 +150,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UIElements\Forms\PrintForm.resx">
+      <DependentUpon>PrintForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Font\minecraft_font_by_pwnage_block-d37t6nb.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -127,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Font\readme.txt" />
+    <EmbeddedResource Include="Icon\Grid_Book_and_Quill.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -12,24 +12,23 @@ using Impress.UIElements.EventArguments;
 
 namespace Impress.UIElements.Components
 {
-    public partial class ColorPicker : FlowLayoutPanel
+    public partial class FormatPicker : FlowLayoutPanel
     {
-        private static int labelSize = 16;
+        private static int labelSize = 24;
         private static int padding = labelSize;
 
 
-        public delegate void ColorPickedHandler(object sender, ColorPickedEventArgs e);
+        public delegate void FormatPickedHandler(object sender, FormatPickedEventArgs e);
 
-        public event ColorPickedHandler ColorPicked;
+        public event FormatPickedHandler FormatPicked;
 
-        public ColorPicker()
+        public FormatPicker()
         {
-            this.SelectedColor = _renderHelper.ColorDictionary.Values.First();
             InitializeComponent();
             PopulateColorLabels();
         }
 
-        public ColorPicker(IContainer container)
+        public FormatPicker(IContainer container)
         {
             container.Add(this);
 
@@ -37,7 +36,7 @@ namespace Impress.UIElements.Components
             PopulateColorLabels();
         }
 
-        public Color SelectedColor { get; set; }
+        
         public char SelectedChar { get; set; }
 
 
@@ -96,12 +95,18 @@ namespace Impress.UIElements.Components
         {
             this.SuspendLayout();
 
-            foreach (KeyValuePair<char, Color> item in _renderHelper.ColorDictionary)
+
+
+            var defaultList = new List<KeyValuePair<char, Font>>();
+            defaultList.Add(new KeyValuePair<char, Font>('x', _renderHelper.DefaultFont));
+
+
+            foreach (KeyValuePair<char, Font> item in _renderHelper.FontDictionary.Union(defaultList))
             {
                 var label = new Label
                     {
                         Text = item.Key.ToString(),
-                        BackColor = item.Value,
+                        Font = item.Value,
                         Width = labelSize,
                         Height = labelSize,
                         TextAlign = ContentAlignment.MiddleCenter,
@@ -125,12 +130,11 @@ namespace Impress.UIElements.Components
                 label.Click += (s, e) =>
                 {
                     SelectedChar = item.Key;
-                    SelectedColor = item.Value;
                     Select(label);
 
-                    if (ColorPicked != null)
+                    if (FormatPicked != null)
                     {
-                        ColorPicked(this,new ColorPickedEventArgs(SelectedColor,SelectedChar));
+                        FormatPicked(this, new FormatPickedEventArgs(SelectedChar));
                     }
 
                 };

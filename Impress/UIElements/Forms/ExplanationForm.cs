@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Impress.UIElements
+namespace Impress.UIElements.Forms
 {
     public partial class ExplanationForm : Form
     {

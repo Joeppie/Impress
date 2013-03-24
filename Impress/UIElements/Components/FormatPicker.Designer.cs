@@ -1,6 +1,6 @@
 ﻿namespace Impress.UIElements.Components
 {
-    partial class ColorPicker
+    partial class FormatPicker
     {
         /// <summary>
         /// Required designer variable.

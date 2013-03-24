@@ -25,12 +25,21 @@ namespace Impress.MinecraftText
             private set;
         }
 
+        public Font DefaultFont
+        {
+            get { return _minecraftFont; }
+        }
 
         public Dictionary<char, Color> ColorDictionary
         {
             get;
             private set;
         }
+
+        /// <summary>
+        /// The backgroundcolor used when removing text.
+        /// </summary>
+        public Color BackgroundColor { get; set; }
 
         /// <summary>
         /// For reverse lookup purposes of the color.
@@ -160,8 +169,9 @@ namespace Impress.MinecraftText
         /// <param name="text"></param>
         /// <param name="graphics"></param>
         /// <param name="page">zero based page index.</param>
+        /// <param name="avoidPaint">When true, does not actually paint the characters onton the graphics object</param>
         /// <returns></returns>
-        public List<MinecraftCharacter> RenderCharactersUsingText(String text, Graphics graphics, int? page)
+        public List<MinecraftCharacter> RenderCharactersUsingText(String text, Graphics graphics, int? page,bool avoidPaint)
         {
             List<MinecraftCharacter> chars = new List<MinecraftCharacter>(text.Length);
 
@@ -185,7 +195,7 @@ namespace Impress.MinecraftText
             Font pretendFont;
 
 
-            SolidBrush eraserBrush = new SolidBrush(Color.Orange);
+            SolidBrush eraserBrush = new SolidBrush(BackgroundColor);
 
             float maxWidth = width;
             float currentWidth = 0;
@@ -330,12 +340,15 @@ namespace Impress.MinecraftText
 
                             if (page == null && currentLine / linesPerPage == 0 || page == currentLine / linesPerPage)
                             {
-                                graphics.FillRectangle(eraserBrush,
-                                new Rectangle(
-                                (int)Math.Round(whitespaceChar.Coordinate.X),
-                                (int)Math.Round(whitespaceChar.Coordinate.Y),
-                                (int)Math.Round(maxWidth - whitespaceChar.Coordinate.X),
-                                (int)Math.Round(size.Height)));
+                                if (!avoidPaint)
+                                {
+                                    graphics.FillRectangle(eraserBrush,
+                                    new Rectangle(
+                                    (int)Math.Round(whitespaceChar.Coordinate.X),
+                                    (int)Math.Round(whitespaceChar.Coordinate.Y),
+                                    (int)Math.Round(maxWidth - whitespaceChar.Coordinate.X),
+                                    (int)Math.Round(size.Height)));
+                                }
                             }
 
                             chars = chars.Take(whitespaceIndex).ToList();
@@ -376,7 +389,10 @@ namespace Impress.MinecraftText
                     //Either first page when rendering first thing, or specified page if different.
                     if (page == null && currentLine / linesPerPage == 0 || page == currentLine / linesPerPage)
                     {
-                        graphics.DrawString(c.ToString(), font, brush, coordinate);
+                        if (!avoidPaint)
+                        {
+                            graphics.DrawString(c.ToString(), font, brush, coordinate);
+                        }
                     }
 
                     currentWidth += size.Width;
@@ -418,6 +434,9 @@ namespace Impress.MinecraftText
             {
                 brush.Dispose();
             }
+
+            _minecraftFont.Dispose();
+            _minecraftFont = null;
 
             privateFontCollection.Dispose();
         }

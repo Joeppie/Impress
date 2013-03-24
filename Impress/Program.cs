@@ -10,12 +10,12 @@ namespace Impress
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
+        [STAThread] //Thread appartment for COM interop to work properly
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Impress.UIElements.MainForm());
+            Application.Run(new Impress.UIElements.Forms.MainForm());
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Impress.MinecraftText;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
@@ -15,6 +16,9 @@ namespace Impress.UIElements.Components
 
         public delegate void PageChangedHandler(object Sender, EventArgs e);
 
+        /// <summary>
+        /// Is fired when Page has changed or MaxPageNumbers has changed.
+        /// </summary>
         public event PageChangedHandler PageChanged;
 
         public List<MinecraftCharacter> MinecraftCharacters { get; private set; }
@@ -23,7 +27,7 @@ namespace Impress.UIElements.Components
         private MinecraftTextRenderHelper RenderHelper;
 
 
-        private int _page = 1;
+        private int _page = 0;
 
 
         public String CurrentPageText
@@ -37,9 +41,9 @@ namespace Impress.UIElements.Components
 
                 return new String(chars);
             }
-
-
         }
+
+        private int _maxPageNumber = 0;
 
 
 
@@ -50,15 +54,11 @@ namespace Impress.UIElements.Components
         {
             get
             {
-                if (MinecraftCharacters != null)
-                {
-                    return Math.Max(MinecraftCharacters.Max(c => c.Page), 0);
-                }
-                return 0;
+                return _maxPageNumber;
             }
         }
 
-
+        [System.ComponentModel.DefaultValue(typeof(int),"0")]
         public int Page
         {
             get
@@ -88,44 +88,80 @@ namespace Impress.UIElements.Components
         {
             this.MouseDown += MinecraftTextLabel_MouseDown;
             this.MouseUp += MinecraftTextLabel_MouseUp;
+
+            //This fires after the repaint.
+
         }
 
         void MinecraftTextLabel_MouseUp(object sender, MouseEventArgs e)
         {
+            //Find out which line the 'unclick' was on.
+            //Iterate over the characters on the clicked line for the current page to find out which was 'unclicked'.
 
+           //We now have an 'up' and a 'down' character, simply loop over al characters that are between and highlight them.
         }
 
 
         //Todo reverse engineer where the mouse was pressed and allow selection via mouseup.
         void MinecraftTextLabel_MouseDown(object sender, MouseEventArgs e)
         {
-            //var chars = MinecraftCharacters.Where(c => c.Page == this.Page);
-
-
-            //foreach (var c in chars)
-            //{
-            //    if(e.X >= c.Coordinate.X && e.X <= c.si )
-
-
-            //}
-
-
+            //Find out which line the click was on.
+            //Iterate over the characters on the clicked line for the current page to find out which was clicked.
         }
 
 
-        private String previousText { get; set; }
+        /// <summary>
+        /// Ensures that the list of minecraftcharacters is properly filled;
+        /// This is useful when the label that contains the text is not actually visible on screen.
+        /// </summary>
+        public void CalculateTextUsingRenderHelper()
+        {
+            RenderHelper = RenderHelper ?? new MinecraftTextRenderHelper();
+            RenderHelper.BackgroundColor = this.BackColor;
+            this.MinecraftCharacters = 
+                RenderHelper.RenderCharactersUsingText(this.Text, this.CreateGraphics(), this.Page, false);
+
+            UpdatePageCount();
+        }
+
+        private void UpdatePageCount()
+        {
+            //Determine the maximum page number and send a 'Page Changed' when the number of pages was mutated.
+            int newMaxPageNumber = (MinecraftCharacters.Count > 0) ? Math.Max(MinecraftCharacters.Max(c => c.Page), 0) : 0;
+
+            if (newMaxPageNumber != _maxPageNumber)
+            {
+                _maxPageNumber = newMaxPageNumber;
+
+                if (this.PageChanged != null)
+                {
+                    PageChanged(this, new EventArgs());
+                }
+            }
+        }
 
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            try
+            {
+                //The renderhelper will rernder onto the graphics and also return a list of characters.
+                //It is this list of characters that end up being used to decide what to send to the clipboard for MineCraft.
+                RenderHelper = RenderHelper ?? new MinecraftTextRenderHelper();
+                RenderHelper.BackgroundColor = this.BackColor;
 
-            //The renderhelper will rernder onto the graphics and also return a list of characters.
-            //It is this list of characters that end up being used to decide what to send to the clipboard for MineCraft.
-            RenderHelper = RenderHelper ?? new MinecraftTextRenderHelper();
+                //render everything. Todo: optimize if this turns out to be slow.
+                this.MinecraftCharacters = RenderHelper.RenderCharactersUsingText(this.Text, e.Graphics, this.Page,false);
 
-            //render everything.
-            this.MinecraftCharacters = RenderHelper.RenderCharactersUsingText(this.Text, e.Graphics, this.Page);
-            previousText = Text;
+                UpdatePageCount();
+            }
+            catch(Exception ex)
+            {
+                Debugger.Break(); //I want to detect this when debugging: it is vitally important to the application.
+            }
+
+            
+
 
         }
 
