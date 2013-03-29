@@ -121,11 +121,13 @@ namespace Impress.UIElements.Components
                 label.MouseEnter += (s, e) => { if (label != selectedLabel) Highlight(label); };
                 label.MouseLeave += (s, e) => { if (label != selectedLabel) UnHighlight(label, true); };
 
+                var copy = item; //prevent access to modified closure.
+
                 //Update selection when a label is clicked.
                 label.Click += (s, e) =>
                 {
-                    SelectedChar = item.Key;
-                    SelectedColor = item.Value;
+                    SelectedChar = copy.Key;
+                    SelectedColor = copy.Value;
                     Select(label);
 
                     if (ColorPicked != null)
