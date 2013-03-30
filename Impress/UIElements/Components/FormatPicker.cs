@@ -126,6 +126,8 @@ namespace Impress.UIElements.Components
                 UnHighlight(label, false);
 
 
+
+                var copy = item; //prevent access to modified closure.
                 
                 int dummy;
                 //The numeric codes would be hard to read with a black text in front.
@@ -140,7 +142,7 @@ namespace Impress.UIElements.Components
                 //Update selection when a label is clicked.
                 label.Click += (s, e) =>
                 {
-                    SelectedChar = item.Key;
+                    SelectedChar = copy.Key;
                     Select(label);
 
                     if (FormatPicked != null)
