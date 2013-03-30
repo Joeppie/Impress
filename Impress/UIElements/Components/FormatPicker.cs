@@ -43,7 +43,13 @@ namespace Impress.UIElements.Components
         private Label selectedLabel;
 
 
-        private MinecraftTextRenderHelper _renderHelper = new MinecraftTextRenderHelper();
+        private MinecraftTextRenderHelper _renderHelper = new MinecraftTextRenderHelper(4);
+
+        private Padding getPadding(double padding)
+        {
+            int intPadding = (int)Math.Round(padding);
+            return new Padding(intPadding, Math.Max(intPadding - 4, 0), intPadding, intPadding);
+        }
 
 
         private void Highlight(Label label)
@@ -51,6 +57,7 @@ namespace Impress.UIElements.Components
             this.SuspendLayout();
             label.Margin = new Padding((int)(labelSize * 0));
             label.Width = label.Height = (int)(labelSize * 1.5);
+            label.BackColor = SystemColors.Highlight;
             this.ResumeLayout();
         }
 
@@ -60,9 +67,10 @@ namespace Impress.UIElements.Components
             {
                 this.SuspendLayout();
             }
-            label.Margin = new Padding((int)(labelSize * 0.25));
+            label.Margin = getPadding(labelSize * 0.25);
             label.Width = label.Height = labelSize;
             label.BorderStyle = BorderStyle.None;
+            label.BackColor = SystemColors.ControlLight;
             if (suspend)
             {
                 this.ResumeLayout();
@@ -81,7 +89,7 @@ namespace Impress.UIElements.Components
             {
                 UnHighlight(selectedLabel, false);
             }
-            label.Margin = new Padding((int)(labelSize * 0));
+            label.Margin = getPadding(labelSize * 0);
             label.Width = label.Height = (int)(labelSize * 1.5);
             label.BorderStyle = BorderStyle.Fixed3D;
 
@@ -105,11 +113,14 @@ namespace Impress.UIElements.Components
             {
                 var label = new Label
                     {
+                        BackColor = SystemColors.ControlLight,
+                        AutoSize = false,
                         Text = item.Key.ToString(),
                         Font = item.Value,
                         Width = labelSize,
-                        Height = labelSize,
-                        TextAlign = ContentAlignment.MiddleCenter,
+                        Height = (int)(labelSize*0.2),
+                        TextAlign = ContentAlignment.TopCenter,
+                        UseCompatibleTextRendering = false
                     };
 
                 UnHighlight(label, false);

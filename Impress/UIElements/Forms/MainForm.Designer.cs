@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.MenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,6 +42,8 @@
             this.PrintButton = new System.Windows.Forms.Button();
             this.AutoFormatWizardButton = new System.Windows.Forms.Button();
             this.SourceTextBox = new System.Windows.Forms.RichTextBox();
+            this.formatPicker1 = new Impress.UIElements.Components.FormatPicker(this.components);
+            this.colorPicker1 = new Impress.UIElements.Components.ColorPicker(this.components);
             this.navigableMinecraftTextLabel1 = new Impress.UIElements.Components.NavigableMinecraftTextLabel();
             this.MenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -53,7 +56,8 @@
             this.helpToolStripMenuItem});
             this.MenuStrip.Location = new System.Drawing.Point(0, 0);
             this.MenuStrip.Name = "MenuStrip";
-            this.MenuStrip.Size = new System.Drawing.Size(626, 24);
+            this.MenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.MenuStrip.Size = new System.Drawing.Size(676, 24);
             this.MenuStrip.TabIndex = 2;
             this.MenuStrip.Text = "menuStrip1";
             // 
@@ -117,6 +121,9 @@
             // 
             // panel1
             // 
+            this.panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.panel1.Controls.Add(this.formatPicker1);
+            this.panel1.Controls.Add(this.colorPicker1);
             this.panel1.Controls.Add(this.navigableMinecraftTextLabel1);
             this.panel1.Controls.Add(this.PrintButton);
             this.panel1.Controls.Add(this.AutoFormatWizardButton);
@@ -124,12 +131,12 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 24);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(626, 528);
+            this.panel1.Size = new System.Drawing.Size(676, 556);
             this.panel1.TabIndex = 3;
             // 
             // PrintButton
             // 
-            this.PrintButton.Location = new System.Drawing.Point(9, 490);
+            this.PrintButton.Location = new System.Drawing.Point(9, 511);
             this.PrintButton.Name = "PrintButton";
             this.PrintButton.Size = new System.Drawing.Size(78, 31);
             this.PrintButton.TabIndex = 10;
@@ -139,7 +146,7 @@
             // 
             // AutoFormatWizardButton
             // 
-            this.AutoFormatWizardButton.Location = new System.Drawing.Point(93, 490);
+            this.AutoFormatWizardButton.Location = new System.Drawing.Point(93, 511);
             this.AutoFormatWizardButton.Name = "AutoFormatWizardButton";
             this.AutoFormatWizardButton.Size = new System.Drawing.Size(136, 31);
             this.AutoFormatWizardButton.TabIndex = 8;
@@ -151,17 +158,36 @@
             // 
             this.SourceTextBox.AcceptsTab = true;
             this.SourceTextBox.DetectUrls = false;
-            this.SourceTextBox.Location = new System.Drawing.Point(356, 13);
+            this.SourceTextBox.Location = new System.Drawing.Point(380, 33);
             this.SourceTextBox.MaxLength = 12750;
             this.SourceTextBox.Name = "SourceTextBox";
-            this.SourceTextBox.Size = new System.Drawing.Size(249, 390);
+            this.SourceTextBox.Size = new System.Drawing.Size(249, 392);
             this.SourceTextBox.TabIndex = 6;
             this.SourceTextBox.Text = "";
             this.SourceTextBox.TextChanged += new System.EventHandler(this.SourceTextBoxTextChanged);
             // 
+            // formatPicker1
+            // 
+            this.formatPicker1.BackColor = System.Drawing.SystemColors.Control;
+            this.formatPicker1.Location = new System.Drawing.Point(370, 3);
+            this.formatPicker1.Name = "formatPicker1";
+            this.formatPicker1.SelectedChar = '\0';
+            this.formatPicker1.Size = new System.Drawing.Size(294, 28);
+            this.formatPicker1.TabIndex = 15;
+            // 
+            // colorPicker1
+            // 
+            this.colorPicker1.BackColor = System.Drawing.SystemColors.Control;
+            this.colorPicker1.Location = new System.Drawing.Point(12, 3);
+            this.colorPicker1.Name = "colorPicker1";
+            this.colorPicker1.SelectedChar = '\0';
+            this.colorPicker1.SelectedColor = System.Drawing.Color.Black;
+            this.colorPicker1.Size = new System.Drawing.Size(361, 28);
+            this.colorPicker1.TabIndex = 14;
+            // 
             // navigableMinecraftTextLabel1
             // 
-            this.navigableMinecraftTextLabel1.Location = new System.Drawing.Point(12, 13);
+            this.navigableMinecraftTextLabel1.Location = new System.Drawing.Point(12, 34);
             this.navigableMinecraftTextLabel1.Name = "navigableMinecraftTextLabel1";
             this.navigableMinecraftTextLabel1.Size = new System.Drawing.Size(338, 434);
             this.navigableMinecraftTextLabel1.TabIndex = 13;
@@ -170,7 +196,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(626, 552);
+            this.ClientSize = new System.Drawing.Size(676, 580);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.MenuStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -203,6 +229,8 @@
         private System.Windows.Forms.Button AutoFormatWizardButton;
         private System.Windows.Forms.Button PrintButton;
         private Components.NavigableMinecraftTextLabel navigableMinecraftTextLabel1;
+        private Components.FormatPicker formatPicker1;
+        private Components.ColorPicker colorPicker1;
 
     }
 }

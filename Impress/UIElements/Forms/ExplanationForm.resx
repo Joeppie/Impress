@@ -117,35 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="richTextBox1.Text" xml:space="preserve">
-    <value>This text editor is designed to allow you to format minecraft books outside minecraft itself and repeatedly print them.
-
-How to use:
-
-To get it to work: add your text. use &amp;&lt;color code&gt; to make colours.
-Add enters to get newlines.
-Navigate to the next page with the back and previous buttons on the form.
-
-Press ctrl-u when in minecraft with a book open to print a single page.
-(The application will perform a ctrl-c of the text on the page and automatically send a paste action that will be handled by minecraft)
-A single page will then be printed.
-Click on the next page in minecraft, and hit ctrl-u again, to print the next page. (The application automatically goes to the next page when printing the previous one)
-
-Once you are satisfied with the result, save your book to a .txt file and load it later on.
-
-Troubleshooting:
-
-I tried to print a page but nothing happened!
--This occurs when minecraft cannot fit the text being pasted onto one page.
-The cause will inevitably be that this application cannot exactly predict what text will fit onto one page, So try removing one line from the bottom (put it on the next page)
-and see where an unexpected linebreak occurs in minecraft, then reduce the amount of text on said page and preferably report the issue with a  saved book.txt to Joeppie :)
-
-I am trying to enter text, but from the bottom of the page, characters are disappearing?
-Minecraft only allows up to 255 characters on a single page. This includes formatting codes.
-This unfortunately means that you should start a new page manually, to avoid ugly formatting where mid-sentence the page skips before reaching the end of the page.
-
-</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

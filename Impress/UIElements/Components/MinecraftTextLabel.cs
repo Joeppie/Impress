@@ -29,6 +29,9 @@ namespace Impress.UIElements.Components
 
         private int _page = 0;
 
+        private int _selectionStart;
+        private int _selectionEnd;
+
 
         public String CurrentPageText
         {
@@ -88,9 +91,15 @@ namespace Impress.UIElements.Components
         {
             this.MouseDown += MinecraftTextLabel_MouseDown;
             this.MouseUp += MinecraftTextLabel_MouseUp;
+            this.MouseHover += MinecraftTextLabel_MouseHover;
 
             //This fires after the repaint.
 
+        }
+
+        void MinecraftTextLabel_MouseHover(object sender, EventArgs e)
+        {
+           
         }
 
         void MinecraftTextLabel_MouseUp(object sender, MouseEventArgs e)
@@ -107,6 +116,22 @@ namespace Impress.UIElements.Components
         {
             //Find out which line the click was on.
             //Iterate over the characters on the clicked line for the current page to find out which was clicked.
+
+            int line = (int) (e.Y / RenderHelper.LineHeight);
+
+
+            var characters = MinecraftCharacters.Where(c => c.Page == this.Page && c.Line == line);
+
+            //The chronologically last character on this page that has a starting X coordinate that lies before cursor.
+            //i.e. the one that was clicked on.
+            var match = characters.OrderBy(c => c.originalIndex).LastOrDefault(c => c.Coordinate.X <= e.X && c.Display);
+
+
+            if (match != null)
+            {
+                MessageBox.Show(match.Char.ToString());
+            }
+
         }
 
 
@@ -139,6 +164,9 @@ namespace Impress.UIElements.Components
                 }
             }
         }
+
+
+
 
 
         protected override void OnPaint(PaintEventArgs e)

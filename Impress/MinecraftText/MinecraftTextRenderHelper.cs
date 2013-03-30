@@ -13,6 +13,8 @@ namespace Impress.MinecraftText
         volatile Font _minecraftFont;
         volatile PrivateFontCollection privateFontCollection = new PrivateFontCollection();
 
+        public float LineHeight { get; private set; }
+
         public Brush CurrentBrush
         {
             get;
@@ -80,7 +82,13 @@ namespace Impress.MinecraftText
             return value ?? _minecraftFont;
         }
 
-        public MinecraftTextRenderHelper()
+        public MinecraftTextRenderHelper() : this(16) { }
+
+        /// <summary>
+        /// Initializes an instance of the MinecraftTextRenderHelper using the specified fontsize
+        /// </summary>
+        /// <param name="fontSize">The fontsize to use when rendering characters.</param>
+        public MinecraftTextRenderHelper(int fontSize)
         {
             ColorDictionary = new Dictionary<char, Color>(16);
             CharDictionary = new Dictionary<Color, char>(16);
@@ -141,26 +149,27 @@ namespace Impress.MinecraftText
 
         }
 
-        /// <summary>
-        /// Renders the given page using the existing generated MinecraftCharacters
-        /// </summary>
-        /// <param name="graphics"></param>
-        /// <param name="page"></param>
-        /// <returns></returns>
-        public void RenderCharacters(
-                    List<MinecraftCharacter> minecraftCharacters, Graphics graphics, int page)
-        {
+        //It would be more efficient to have this kind of implementation, eventually.
+        ///// <summary>
+        ///// Renders the given page using the existing generated MinecraftCharacters
+        ///// </summary>
+        ///// <param name="graphics"></param>
+        ///// <param name="page"></param>
+        ///// <returns></returns>
+        //public void RenderCharacters(
+        //            List<MinecraftCharacter> minecraftCharacters, Graphics graphics, int page)
+        //{
 
-            foreach (var character in minecraftCharacters.Where(c => c.Page == page && c.Display).ToList())
-            {
-                graphics.DrawString(
-                    character.Char.ToString(),
-                    character.Font,
-                    character.Brush,
-                    character.Coordinate
-                    );
-            }
-        }
+        //    foreach (var character in minecraftCharacters.Where(c => c.Page == page && c.Display).ToList())
+        //    {
+        //        graphics.DrawString(
+        //            character.Char.ToString(),
+        //            character.Font,
+        //            character.Brush,
+        //            character.Coordinate
+        //            );
+        //    }
+        //}
 
 
         /// <summary>
@@ -245,7 +254,8 @@ namespace Impress.MinecraftText
                         Line = currentLine,
                         Page = currentLine / linesPerPage,
                         Coordinate = new PointF(),
-                        Display = false
+                        Display = false,
+                        originalIndex = i
                     });
                     indexInPage++;
 
@@ -265,7 +275,8 @@ namespace Impress.MinecraftText
                         Line = currentLine,
                         Page = currentLine / linesPerPage,
                         Coordinate = new PointF(),
-                        Display = false
+                        Display = false,
+                        originalIndex = i
                     });
                     indexInPage++;
 
@@ -294,7 +305,8 @@ namespace Impress.MinecraftText
                         Line = currentLine,
                         Page = currentLine / linesPerPage,
                         Coordinate = new PointF(),
-                        Display = false
+                        Display = false,
+                        originalIndex = i
                     });
                     indexInPage++;
                     indexInPage++; //Code is consumed, but count towards max char count.
@@ -353,6 +365,8 @@ namespace Impress.MinecraftText
 
                             chars = chars.Take(whitespaceIndex).ToList();
 
+                            PointF previousCoordinate = chars.Last().Coordinate;
+
                             //Explicit enter to avoid differences in printed book and previewed.
                             chars.Add(new MinecraftCharacter
                             {
@@ -361,12 +375,13 @@ namespace Impress.MinecraftText
                                 Font = font,
                                 Line = currentLine,
                                 Page = currentLine / linesPerPage,
-                                Coordinate = chars.Last().Coordinate //whitespace anyhow.
+                                Coordinate = new PointF(previousCoordinate.X + 8,previousCoordinate.Y), //must differ for clicking.
+                                Display = true,
+                                originalIndex = i
                             });
 
-                            indexInPage -= (i - whitespaceIndex) - 1; //one less, register that enter sir!
-                            i -= i - whitespaceIndex;
-
+                            indexInPage -= (i - whitespaceIndex) - 1; //one less, register that enter.
+                            i -= i - whitespaceIndex;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
                             currentLine++;
                             currentWidth = 0;
                             continue; //On to the 'next' (first char of this word) character.
@@ -385,6 +400,8 @@ namespace Impress.MinecraftText
 
 
                     PointF coordinate = new PointF(currentWidth, (currentLine % linesPerPage) * size.Height);
+                    
+                    LineHeight = size.Height;
 
                     //Either first page when rendering first thing, or specified page if different.
                     if (page == null && currentLine / linesPerPage == 0 || page == currentLine / linesPerPage)
@@ -405,7 +422,8 @@ namespace Impress.MinecraftText
                         Font = font,
                         Line = currentLine,
                         Page = currentLine / linesPerPage,
-                        Coordinate = coordinate
+                        Coordinate = coordinate,
+                        Display = true
                     });
                     indexInPage++;
 
